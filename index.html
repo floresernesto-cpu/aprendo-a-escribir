@@ -231,10 +231,10 @@
   </header>
 
   <div class="panel">
-    <form class="word-form" id="wordForm">
+    <div class="word-form" id="wordForm">
       <input type="text" id="wordInput" placeholder="Escribe una palabra, por ejemplo: Ana" maxlength="14" autocomplete="off">
-      <button type="submit" class="btn">Crear palabra</button>
-    </form>
+      <button type="button" class="btn" id="createBtn">Crear palabra</button>
+    </div>
     <p class="hint" id="formHint">Escribe un nombre o una palabra y pulsa "Crear palabra".</p>
 
     <div id="stage">
@@ -609,8 +609,9 @@
     repeatBtn.disabled = (currentIndex === 0) || isAnimating;
   }
 
-  wordForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+  const createBtn = document.getElementById('createBtn');
+
+  function handleCreateWord(){
     const word = normalizeWord(wordInput.value);
     if(!word){
       formHint.textContent = 'Escribe al menos una letra para comenzar.';
@@ -621,6 +622,14 @@
     formHint.style.color = '';
     wordInput.value = word;
     buildWord(word);
+  }
+
+  createBtn.addEventListener('click', handleCreateWord);
+  wordInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      handleCreateWord();
+    }
   });
 
   advanceBtn.addEventListener('click', async () => {
@@ -654,10 +663,6 @@
       onLetterBoxClick(i);
     }
   });
-
-  // Ajustar disabled del botón repetir tras cada avance
-  const observer = new MutationObserver(refreshRepeatAvailability);
-  observer.observe(controlsArea, { attributes: true, childList: true, subtree: true });
 
 })();
 </script>
