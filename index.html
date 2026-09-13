@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f4f7ff">
+<title>Aprendo a Escribir · V2</title>
+<style>
+:root{--blue:#3678e8;--red:#e53935;--ink:#20242b;--muted:#687386;--line:#c9d1dd}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#f4f7ff;color:var(--ink)}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+button,input{font:inherit}
+button{touch-action:manipulation;cursor:pointer;-webkit-user-select:none;user-select:none;position:relative;z-index:20;pointer-events:auto}
+.app{width:min(1100px,100%);margin:auto;padding:12px}
+.top{background:#fff;border-radius:22px;padding:14px;box-shadow:0 5px 20px #00000010}
+.brand{font-size:25px;font-weight:800;margin-bottom:10px}
+.row{display:flex;gap:9px;flex-wrap:wrap}
+input{flex:1;min-width:180px;padding:12px 14px;border:2px solid #d8dfeb;border-radius:14px;font-size:22px;outline:0}
+input:focus{border-color:var(--blue)}
+.btn{border:0;border-radius:14px;padding:12px 17px;font-size:19px;font-weight:700;background:var(--blue);color:white}
+.btn.secondary{background:#e9eef7;color:#273246}
+.info{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:15px 2px 10px;flex-wrap:wrap}
+.word{font-size:32px;font-weight:800}.status{color:var(--muted);font-size:18px}
+.card{background:#fff;border-radius:22px;padding:12px;box-shadow:0 5px 20px #00000010}
+.board{position:relative;width:100%;height:min(62vh,540px);min-height:310px;border:3px solid #dce3ee;border-radius:18px;overflow:hidden;background:repeating-linear-gradient(to bottom,#fff 0,#fff 33%,#edf2fb 33.3%,#fff 33.7%)}
+svg{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.guide span{font-family:"Comic Sans MS","Trebuchet MS",cursive;font-size:min(28vw,190px);font-weight:700;color:transparent;-webkit-text-stroke:3px var(--line);opacity:.75}
+.center-letter{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:"Comic Sans MS","Trebuchet MS",cursive;font-size:min(24vw,165px);font-weight:700;color:transparent;-webkit-text-stroke:2px #dce2eb}
+.panel{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+.instruction{font-size:20px;font-weight:700;flex:1;min-width:230px}
+.actions{display:flex;gap:8px}
+.actions .btn{min-width:110px}
+.tip{margin-top:10px;padding:12px 14px;border-radius:14px;background:#fff8e8;font-size:17px;line-height:1.35}
+.dots{display:flex;gap:7px;margin-top:10px;justify-content:center}
+.dots i{width:11px;height:11px;border-radius:50%;background:#d7deea}.dots i.done{background:#20242b}.dots i.active{background:var(--red);transform:scale(1.25)}
+#success{display:none;text-align:center;padding:18px;font-size:28px;font-weight:800}
+@media(max-width:600px){
+ .app{padding:8px}.brand{font-size:22px}.row{display:grid;grid-template-columns:1fr 1fr}.row input{grid-column:1/-1;width:100%;min-width:0}.btn{padding:11px 10px}
+ .word{font-size:26px}.status{font-size:16px}.board{height:55vh;min-height:300px}.instruction{font-size:18px}
+}
+@media(orientation:landscape) and (max-height:600px){
+ .board{height:65vh;min-height:250px}.top{padding:9px}.info{margin:8px 2px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <section class="top">
+  <div class="brand">✏️ Aprendo a Escribir <small>V2.1 · iPhone/iPad</small></div>
+  <div class="row">
+   <input id="word" maxlength="18" inputmode="text" autocomplete="off" autocapitalize="words" placeholder="Escribe una palabra">
+   <button class="btn" id="start">▶ Comenzar</button>
+   <button class="btn secondary" id="repeat">↻ Repetir</button>
+  </div>
+ </section>
+
+ <div class="info">
+  <div class="word" id="wordLabel">Escribe una palabra</div>
+  <div class="status" id="status"></div>
+ </div>
+
+ <section class="card">
+  <div class="board" id="board">
+   <div class="guide"><span id="guideLetter"></span></div>
+   <div class="center-letter" id="centerLetter"></div>
+   <svg id="svg" viewBox="0 0 1000 540" preserveAspectRatio="xMidYMid meet" aria-label="Animación de escritura"></svg>
+  </div>
+  <div class="panel">
+   <div class="instruction" id="instruction">Escribe una palabra y toca “Comenzar”.</div>
+   <div class="actions">
+    <button class="btn secondary" id="slow">🐢 Lento</button>
+    <button class="btn secondary" id="next">Siguiente ▶</button>
+   </div>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="tip">👆 <b>En celular o tablet:</b> toca “Siguiente” o toca el área de la letra. Primero observa la demostración y después puedes intentar copiarla con el dedo.</div>
+  <div id="success">🎉 ¡Muy bien! ¡Terminaste!</div>
+ </section>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id);
+let letters=[],idx=0,slow=false,busy=false;
+
+const strokes={
+a:[[[20,85],[20,48],[35,28],[58,28],[75,48],[75,85]],[[20,60],[45,50],[75,55]]],
+b:[[[25,20],[25,85]],[[25,48],[43,32],[64,38],[67,58],[53,72],[25,67]]],
+c:[[[72,37],[60,28],[42,29],[28,43],[28,63],[43,77],[62,73],[72,63]]],
+d:[[[70,20],[70,85]],[[70,48],[52,32],[34,37],[30,57],[42,72],[70,66]]],
+e:[[[72,54],[28,54],[31,40],[45,30],[64,36],[72,46]],[[30,56],[36,73],[56,78],[72,68]]],
+f:[[[62,20],[48,17],[36,28],[36,85]],[[25,43],[58,43]]],
+g:[[[72,40],[60,31],[42,32],[30,46],[32,65],[47,74],[65,68],[72,58]],[[72,58],[72,86],[54,93],[39,86]]],
+h:[[[25,20],[25,85]],[[25,53],[43,34],[62,39],[67,54],[67,85]]],
+i:[[[40,42],[40,85]],[[40,25],[40,25]]],
+j:[[[62,42],[62,84],[53,94],[39,92],[32,83]],[[62,25],[62,25]]],
+k:[[[25,20],[25,85]],[[68,35],[25,57],[70,85]]],
+l:[[[40,20],[40,85],[68,85]]],
+m:[[[18,85],[18,45],[30,34],[44,47],[54,35],[69,47],[69,85]],[[44,47],[44,85]]],
+n:[[[25,85],[25,46],[41,35],[58,42],[66,56],[66,85]]],
+o:[[[49,31],[34,34],[27,49],[31,68],[48,77],[65,69],[71,50],[65,34],[49,31]]],
+p:[[[25,92],[25,36],[43,29],[62,38],[64,56],[50,68],[25,62]]],
+q:[[[68,85],[68,48],[61,34],[45,31],[30,40],[29,59],[42,72],[60,68],[68,58]],[[58,66],[78,88]]],
+r:[[[25,85],[25,46],[40,36],[57,43]],[[25,59],[46,50]]],
+s:[[[70,39],[58,31],[40,32],[29,42],[39,52],[59,55],[69,65],[58,76],[40,77],[28,68]]],
+t:[[[45,20],[45,85]],[[27,43],[65,43]]],
+u:[[[25,43],[25,67],[35,77],[49,75],[64,61],[64,43]],[[64,43],[64,85]]],
+v:[[[22,42],[45,85],[70,42]]],
+w:[[[17,43],[29,85],[45,52],[59,85],[77,43]]],
+x:[[[25,37],[70,85]],[[70,37],[25,85]]],
+y:[[[22,38],[45,60],[70,38]],[[45,60],[45,92]]],
+z:[[[23,38],[72,38],[28,85],[74,85]]],
+'ñ':[[[20,85],[20,48],[35,34],[53,40],[67,55],[67,85]],[[20,66],[42,54],[67,60]],[[30,20],[38,13],[47,20]]],
+'á':[[[20,85],[20,48],[35,28],[58,28],[75,48],[75,85]],[[20,60],[45,50],[75,55]],[[53,14],[45,24]]],
+'é':[[[72,54],[28,54],[31,40],[45,30],[64,36],[72,46]],[[30,56],[36,73],[56,78],[72,68]],[[48,14],[55,22]]],
+'í':[[[40,42],[40,85]],[[40,25],[40,25]],[[43,14],[50,22]]],
+'ó':[[[49,31],[34,34],[27,49],[31,68],[48,77],[65,69],[71,50],[65,34],[49,31]],[[51,14],[44,24]]],
+'ú':[[[25,43],[25,67],[35,77],[49,75],[64,61],[64,43]],[[64,43],[64,85]],[[48,14],[55,22]]]
+};
+
+function cleanWord(v){
+ v=v.trim().replace(/\s+/g,"").toLowerCase();
+ if(!v)return "";
+ return v[0].toUpperCase()+v.slice(1);
+}
+function drawPath(points,color){
+ const p=document.createElementNS(NS,"path");
+ p.setAttribute("d","M "+points.map((q,i)=>(i?"L ":"")+q[0]+" "+q[1]).join(" "));
+ p.setAttribute("fill","none");p.setAttribute("stroke",color);p.setAttribute("stroke-width","7");
+ p.setAttribute("stroke-linecap","round");p.setAttribute("stroke-linejoin","round");
+ p.setAttribute("vector-effect","non-scaling-stroke");
+ return p;
+}
+function renderDots(){
+ $("dots").innerHTML="";
+ letters.forEach((_,i)=>{
+  const d=document.createElement("i");if(i<idx)d.className="done";if(i===idx)d.className="active";$("dots").appendChild(d);
+ });
+}
+function start(){
+ const w=cleanWord($("word").value);
+ if(!w){$("wordLabel").textContent="Escribe una palabra";return}
+ $("word").value=w;letters=[...w.toLowerCase()];idx=0;
+ $("wordLabel").textContent=w;$("success").style.display="none";renderDots();showLetter();
+}
+function showLetter(){
+ if(idx>=letters.length){finish();return}
+ busy=true;
+ const ch=letters[idx], data=strokes[ch]||[];
+ $("guideLetter").textContent=ch;
+ $("centerLetter").textContent=ch;
+ $("status").textContent=`Letra ${idx+1} de ${letters.length}`;
+ $("instruction").textContent=idx===0?"Observa el trazo rojo.": "Observa el movimiento y después intenta copiarlo.";
+ $("svg").innerHTML="";
+ renderDots();
+ if(!data.length){busy=false;return}
+ const color=idx===0?"#e53935":"#20242b";
+ const scale=3.65,x0=500,y0=30;
+ let delay=0,total=0;
+ data.forEach(st=>{
+  const pts=st.map(([x,y])=>[x0+(x-50)*scale,y0+(y-5)*scale]);
+  const p=drawPath(pts,color);$("svg").appendChild(p);
+  const len=p.getTotalLength(),duration=(slow?1700:950)+len*1.4;
+  p.style.strokeDasharray=len+" "+len;p.style.strokeDashoffset=len;
+  p.animate([{strokeDashoffset:len},{strokeDashoffset:0}],{duration,easing:"ease-in-out",delay,fill:"forwards"});
+  delay+=duration+250;total=delay;
+ });
+ setTimeout(()=>busy=false,total+100);
+}
+function next(){
+ if(!letters.length){start();return}
+ if(busy)return;
+ idx++;showLetter();
+}
+function repeat(){if(letters.length){$("svg").innerHTML="";showLetter()}}
+function finish(){
+ $("status").textContent="¡Palabra terminada!";
+ $("instruction").textContent="¡Excelente trabajo!";
+ $("guideLetter").textContent="";
+ $("centerLetter").textContent=$("word").value;
+ $("svg").innerHTML="";$("success").style.display="block";renderDots();
+}
+// Controles táctiles robustos para iPhone/iPad y mouse.
+function bindTap(id, fn){
+  const el=$(id);
+  el.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); fn(); }, {passive:false});
+  el.addEventListener("touchend", function(e){ e.preventDefault(); e.stopPropagation(); fn(); }, {passive:false});
+}
+bindTap("start", start);
+bindTap("next", next);
+bindTap("repeat", repeat);
+bindTap("slow", ()=>{slow=!slow;$("slow").textContent=slow?"🐢 Lento ✓":"🐢 Lento";});
+$("word").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();start()}});
+
+// Solo el tablero responde como avance; los botones quedan completamente aislados.
+$("board").addEventListener("click", function(e){
+  if(e.target.closest("button,input")) return;
+  next();
+}, {passive:true});
+$("board").addEventListener("touchend", function(e){
+  if(e.target.closest("button,input")) return;
+  e.preventDefault();
+  next();
+}, {passive:false});
+</script>
+</body>
+</html>
