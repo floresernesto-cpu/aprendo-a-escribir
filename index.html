@@ -2,119 +2,664 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#f4f7ff">
-<title>Aprendo a Escribir · V2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprendo a escribir</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap');
-:root{--blue:#3978e8;--red:#e53935;--ink:#20242b;--guide:#bfc7d4}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;font-family:Nunito,Arial,sans-serif;background:#f4f7ff;color:var(--ink)}
-body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-.app{width:min(1100px,100%);margin:auto;padding:10px}.top,.card{background:#fff;border-radius:22px;box-shadow:0 5px 20px #00000010}
-.top{padding:14px}.brand{font-size:25px;font-weight:800;margin-bottom:10px}.row{display:flex;gap:9px;flex-wrap:wrap}
-input{flex:1;min-width:180px;padding:12px 14px;border:2px solid #d8dfeb;border-radius:14px;font-size:22px;outline:0;font-family:inherit}
-input:focus{border-color:var(--blue)}button{font-family:inherit;touch-action:manipulation;user-select:none;-webkit-user-select:none;position:relative;z-index:20;pointer-events:auto;cursor:pointer;border:0;border-radius:14px;padding:12px 17px;font-size:19px;font-weight:800}
-.primary{background:var(--blue);color:#fff}.secondary{background:#e9eef7;color:#273246}
-.info{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:15px 2px 10px;flex-wrap:wrap}.word{font-size:31px;font-weight:800}.status{color:#687386;font-size:18px}
-.card{padding:12px}.board{position:relative;width:100%;height:min(62vh,540px);min-height:310px;border:3px solid #dce3ee;border-radius:18px;overflow:hidden;background:repeating-linear-gradient(to bottom,#fff 0,#fff 33%,#edf2fb 33.3%,#fff 33.7%)}
-#wordSvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.letter{font-family:Nunito,Arial,sans-serif;font-weight:800;text-anchor:middle;paint-order:stroke;vector-effect:non-scaling-stroke}
-.guide{fill:transparent;stroke:var(--guide);stroke-width:2.5;stroke-dasharray:3 5}
-.active{fill:transparent;stroke-width:5}.active.red{stroke:var(--red)}.active.black{stroke:var(--ink)}
-.panel{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
-.instruction{font-size:20px;font-weight:800;flex:1;min-width:230px}.actions{display:flex;gap:8px}.actions button{min-width:112px}
-.dots{display:flex;gap:7px;margin-top:10px;justify-content:center}.dots i{width:11px;height:11px;border-radius:50%;background:#d7deea}.dots i.done{background:var(--ink)}.dots i.active{background:var(--red);transform:scale(1.25)}
-.tip{margin-top:10px;padding:12px 14px;border-radius:14px;background:#fff8e8;font-size:17px;line-height:1.35}#success{display:none;text-align:center;padding:18px;font-size:28px;font-weight:800}
-@media(max-width:600px){.app{padding:8px}.brand{font-size:22px}.row{display:grid;grid-template-columns:1fr 1fr}.row input{grid-column:1/-1;width:100%;min-width:0}button{padding:11px 9px}.word{font-size:26px}.status{font-size:16px}.board{height:55vh;min-height:300px}.instruction{font-size:18px}}
-@media(orientation:landscape) and (max-height:600px){.board{height:65vh;min-height:250px}.top{padding:9px}.info{margin:8px 2px}}
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito:wght@500;700;800&display=swap');
+
+  :root{
+    --bg: #EFF5EE;
+    --panel: #FFFFFF;
+    --ink: #33363B;
+    --ink-soft: #6B7069;
+    --teal: #2F6F62;
+    --teal-dark: #235349;
+    --gold: #E8AE53;
+    --guide: #C9CFC7;
+    --trace-red: #D64545;
+    --trace-black: #2B2B2E;
+    --ring: #2F6F6233;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+  }
+
+  .wrap{
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  header{
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  h1{
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 40px);
+    color: var(--teal-dark);
+    margin: 0 0 8px;
+  }
+
+  header p{
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .panel{
+    background: var(--panel);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 2px 0 rgba(47,111,98,0.06);
+    border: 1px solid #E4EBE2;
+  }
+
+  .word-form{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  #wordInput{
+    flex: 1 1 240px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid #DCE4DA;
+    color: var(--ink);
+    outline: none;
+    background: #FBFCFA;
+  }
+  #wordInput:focus{
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px var(--ring);
+  }
+
+  .btn{
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    padding: 14px 22px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    background: var(--teal);
+    transition: transform 0.12s ease, background 0.15s ease;
+  }
+  .btn:hover{ background: var(--teal-dark); }
+  .btn:active{ transform: scale(0.97); }
+  .btn:focus-visible{
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .btn.secondary{
+    background: #EFF5EE;
+    color: var(--teal-dark);
+    border: 2px solid #DCE4DA;
+  }
+  .btn.secondary:hover{ background: #E3ECE1; }
+  .btn:disabled{
+    opacity: 0.45;
+    cursor: default;
+    transform:none;
+  }
+
+  .hint{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  #stage{
+    margin-top: 28px;
+  }
+
+  #lettersRow{
+    display:flex;
+    justify-content:center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 10px 4px 26px;
+  }
+
+  .letter-box{
+    position: relative;
+    width: 108px;
+    height: 148px;
+    background: #FBFCFA;
+    border-radius: 16px;
+    border: 2px solid #E4EBE2;
+    cursor: default;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .letter-box svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .letter-box.active{
+    border-color: var(--teal);
+    background: #F3F9F2;
+    box-shadow: 0 0 0 5px var(--ring);
+    cursor: pointer;
+  }
+  .letter-box.active:focus-visible{
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
+  .letter-box.done{
+    border-color: #CFE0CC;
+  }
+
+  .badge{
+    position:absolute;
+    top: 6px;
+    left: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    opacity: 0.55;
+  }
+
+  .controls{
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    gap: 10px;
+  }
+
+  .controls-row{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content:center;
+  }
+
+  #progressText{
+    font-weight: 800;
+    color: var(--teal-dark);
+    font-size: 15px;
+    min-height: 20px;
+  }
+
+  #celebration{
+    text-align:center;
+    margin-top: 6px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 22px;
+    color: var(--teal-dark);
+    display:none;
+  }
+
+  .empty-msg{
+    text-align:center;
+    color: var(--ink-soft);
+    font-weight: 700;
+    padding: 30px 10px;
+  }
+
+  @media (max-width: 420px){
+    .letter-box{ width: 88px; height: 122px; }
+  }
 </style>
 </head>
 <body>
-<div class="app">
- <section class="top">
-  <div class="brand">✏️ Aprendo a Escribir <small>V3 · misma tipografía</small></div>
-  <div class="row">
-   <input id="word" maxlength="18" inputmode="text" autocomplete="off" autocapitalize="words" placeholder="Escribe una palabra">
-   <button class="btn" id="start">▶ Comenzar</button>
-   <button class="btn secondary" id="repeat">↻ Repetir</button>
-  </div>
- </section>
+<div class="wrap">
 
- <div class="info">
-  <div class="word" id="wordLabel">Escribe una palabra</div>
-  <div class="status" id="status"></div>
- </div>
+  <header>
+    <h1>Aprendo a escribir</h1>
+    <p>Escribe una palabra y practica cómo se traza cada letra, un paso a la vez.</p>
+  </header>
 
- <section class="card">
-  <div class="board" id="board">
-   <div class="guide"><span id="guideLetter"></span></div>
-   <div class="center-letter" id="centerLetter"></div>
-   <svg id="wordSvg" viewBox="0 0 1000 540" preserveAspectRatio="xMidYMid meet" aria-label="Palabra para practicar"></svg>
-  </div>
   <div class="panel">
-   <div class="instruction" id="instruction">Escribe una palabra y toca “Comenzar”.</div>
-   <div class="actions">
-    <button class="btn secondary" id="slow">🐢 Lento</button>
-    <button class="btn secondary" id="next">Siguiente ▶</button>
-   </div>
+    <form class="word-form" id="wordForm">
+      <input type="text" id="wordInput" placeholder="Escribe una palabra, por ejemplo: Ana" maxlength="14" autocomplete="off">
+      <button type="submit" class="btn">Crear palabra</button>
+    </form>
+    <p class="hint" id="formHint">Escribe un nombre o una palabra y pulsa "Crear palabra".</p>
+
+    <div id="stage">
+      <div id="lettersRow"></div>
+
+      <div class="controls" id="controlsArea" style="display:none;">
+        <div id="progressText" aria-live="polite"></div>
+        <div class="controls-row">
+          <button class="btn" id="advanceBtn">Trazar primera letra</button>
+          <button class="btn secondary" id="repeatBtn">Repetir esta letra</button>
+        </div>
+        <div id="celebration">¡Muy bien! Escribiste tu palabra 🌿</div>
+        <div class="controls-row" id="afterRow" style="display:none;">
+          <button class="btn" id="againBtn">Practicar de nuevo</button>
+          <button class="btn secondary" id="newWordBtn">Escribir otra palabra</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="dots" id="dots"></div>
-  <div class="tip">👆 <b>En celular o tablet:</b> toca “Siguiente” o toca el área de la letra. Primero observa la demostración y después puedes intentar copiarla con el dedo.</div>
-  <div id="success">🎉 ¡Muy bien! ¡Terminaste!</div>
- </section>
+
 </div>
 
 <script>
-const NS="http://www.w3.org/2000/svg";const $=id=>document.getElementById(id);
-let letters=[],idx=0,slow=false,busy=false;
-function normalize(v){v=v.trim().replace(/\s+/g,"").toLowerCase();return v?v[0].toUpperCase()+v.slice(1):""}
-function el(tag,attrs={}){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e}
-function renderDots(){$("dots").innerHTML="";letters.forEach((_,i)=>{const d=document.createElement("i");if(i<idx)d.className="done";if(i===idx)d.className="active";$("dots").appendChild(d)})}
-function buildWord(){
- const svg=$("wordSvg");svg.innerHTML="";const n=letters.length;
- const fs=n<=5?170:n<=8?145:n<=11?115:92,gap=n<=5?28:n<=8?20:12;
- const factors=letters.map(c=>"ilÍíj".includes(c)?0.42:"mw".includes(c)?0.9:0.66);
- const total=factors.reduce((a,b)=>a+b,0)*fs+gap*(n-1);
- let x=(1000-total)/2+20;
- letters.forEach((ch,i)=>{
-   const w=factors[i]*fs;x+=w/2;
-   const guide=el("text",{x,y:335,class:"letter guide"});guide.style.fontSize=fs+"px";guide.textContent=ch;svg.appendChild(guide);
-   const active=el("text",{x,y:335,class:"letter active "+(i===0?"red":"black"),opacity:i<idx?1:0});
-   active.style.fontSize=fs+"px";active.textContent=ch;active.dataset.index=i;svg.appendChild(active);
-   x+=w/2+gap;
- });
-}
-function animateCurrent(){
- if(idx>=letters.length){finish();return}
- buildWord();renderDots();busy=true;
- const active=[...$("wordSvg").querySelectorAll(".active")][idx];
- const duration=slow?1900:1050;
- active.setAttribute("opacity","1");
- active.animate([
-   {fill:"transparent",strokeDasharray:"3 11",strokeDashoffset:"150"},
-   {fill:"transparent",strokeDasharray:"900 0",strokeDashoffset:"0"},
-   {fill:idx===0?"#e53935":"#20242b",strokeDasharray:"900 0",strokeDashoffset:"0"}
- ],{duration,easing:"ease-in-out",fill:"forwards"});
- const r=active.getBoundingClientRect();
- const cursor=el("circle",{cx:parseFloat(active.getAttribute("x"))-r.width/2,cy:335,r:7,fill:idx===0?"#e53935":"#20242b"});
- $("wordSvg").appendChild(cursor);
- cursor.animate([{cx:parseFloat(active.getAttribute("x"))-r.width/2},{cx:parseFloat(active.getAttribute("x"))+r.width/2}],{duration,easing:"ease-in-out",fill:"forwards"});
- $("status").textContent=`Letra ${idx+1} de ${letters.length}`;
- $("instruction").textContent=idx===0?"Observa la primera letra: se remarca en rojo.":"Observa la letra y después intenta copiarla.";
- setTimeout(()=>{cursor.remove();busy=false},duration+80);
-}
-function start(){const w=normalize($("word").value);if(!w){$("wordLabel").textContent="Escribe una palabra";return}
- $("word").value=w;letters=[...w.toLowerCase()];idx=0;$("wordLabel").textContent=w;$("success").style.display="none";animateCurrent()}
-function next(){if(!letters.length){start();return}if(busy)return;idx++;animateCurrent()}
-function repeat(){if(letters.length&&!busy)animateCurrent()}
-function finish(){buildWord();$("status").textContent="¡Palabra terminada!";$("instruction").textContent="¡Excelente trabajo!";$("success").style.display="block";renderDots()}
-function bindTap(id,fn){const e=$(id);e.addEventListener("click",x=>{x.preventDefault();x.stopPropagation();fn()},{passive:false});e.addEventListener("touchend",x=>{x.preventDefault();x.stopPropagation();fn()},{passive:false})}
-bindTap("start",start);bindTap("next",next);bindTap("repeat",repeat);
-bindTap("slow",()=>{slow=!slow;$("slow").textContent=slow?"🐢 Lento ✓":"🐢 Lento"});
-$("word").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();start()}});
-$("board").addEventListener("click",e=>{if(!e.target.closest("button,input"))next()});
-$("board").addEventListener("touchend",e=>{if(!e.target.closest("button,input")){e.preventDefault();next()}},{passive:false});
+(function(){
+
+  /* ---------- Datos de trazos de letras (fuente monolínea para calcar) ---------- */
+  /* viewBox usado por todas las letras: "0 -12 100 152" */
+
+  const dot = (x,y) => `M${x},${y} L${x+2},${y}`;
+
+  const LETTERS = {
+    // ---------- MAYÚSCULAS ----------
+    'A': [`M50,15 L18,110`, `M50,15 L82,110`, `M30,75 L70,75`],
+    'B': [`M22,15 L22,110`, `M22,15 L52,15 Q68,15 68,35 Q68,55 52,55 L22,55`, `M22,58 L55,58 Q72,58 72,84 Q72,110 55,110 L22,110`],
+    'C': [`M75,32 Q50,10 30,32 Q12,52 12,63 Q12,74 30,94 Q50,115 75,93`],
+    'D': [`M22,15 L22,110`, `M22,15 L48,15 Q75,15 75,63 Q75,110 48,110 L22,110`],
+    'E': [`M70,15 L22,15 L22,110 L70,110`, `M22,63 L60,63`],
+    'F': [`M22,110 L22,15 L68,15`, `M22,63 L58,63`],
+    'G': [`M75,32 Q50,10 30,32 Q12,52 12,63 Q12,90 35,105 Q58,118 72,100 L72,68 L52,68`],
+    'H': [`M22,15 L22,110`, `M78,15 L78,110`, `M22,63 L78,63`],
+    'I': [`M50,15 L50,110`],
+    'J': [`M65,15 L65,90 Q65,110 45,110 Q28,110 25,92`],
+    'K': [`M22,15 L22,110`, `M75,15 L22,65`, `M35,52 L78,110`],
+    'L': [`M25,15 L25,110 L75,110`],
+    'M': [`M18,110 L18,15 L50,70 L82,15 L82,110`],
+    'N': [`M20,110 L20,15 L80,110 L80,15`],
+    'O': [`M50,15 Q80,15 80,63 Q80,110 50,110 Q20,110 20,63 Q20,15 50,15`],
+    'P': [`M22,110 L22,15 L52,15 Q72,15 72,40 Q72,65 52,65 L22,65`],
+    'Q': [`M50,15 Q80,15 80,63 Q80,110 50,110 Q20,110 20,63 Q20,15 50,15`, `M58,85 L82,115`],
+    'R': [`M22,110 L22,15 L52,15 Q72,15 72,38 Q72,60 52,60 L22,60`, `M45,60 L78,110`],
+    'S': [`M72,32 Q55,12 35,20 Q18,28 20,45 Q22,58 45,62 Q72,68 72,88 Q72,108 48,110 Q28,112 18,95`],
+    'T': [`M15,15 L85,15`, `M50,15 L50,110`],
+    'U': [`M20,15 L20,85 Q20,110 50,110 Q80,110 80,85 L80,15`],
+    'V': [`M15,15 L50,110`, `M85,15 L50,110`],
+    'W': [`M12,15 L30,110 L50,55 L70,110 L88,15`],
+    'X': [`M18,15 L82,110`, `M82,15 L18,110`],
+    'Y': [`M15,15 L50,65`, `M85,15 L50,65`, `M50,65 L50,110`],
+    'Z': [`M18,15 L82,15 L18,110 L82,110`],
+    'Ñ': [`M20,110 L20,15 L80,110 L80,15`, `M25,0 Q38,-10 50,0 Q62,10 75,0`],
+    'Á': [`M50,15 L18,110`, `M50,15 L82,110`, `M30,75 L70,75`, `M42,4 L54,-9`],
+    'É': [`M70,15 L22,15 L22,110 L70,110`, `M22,63 L60,63`, `M42,4 L54,-9`],
+    'Í': [`M50,15 L50,110`, `M42,4 L54,-9`],
+    'Ó': [`M50,15 Q80,15 80,63 Q80,110 50,110 Q20,110 20,63 Q20,15 50,15`, `M42,4 L54,-9`],
+    'Ú': [`M20,15 L20,85 Q20,110 50,110 Q80,110 80,85 L80,15`, `M42,4 L54,-9`],
+    'Ü': [`M20,15 L20,85 Q20,110 50,110 Q80,110 80,85 L80,15`, dot(38,0), dot(60,0)],
+
+    // ---------- minúsculas ----------
+    'a': [`M68,84 Q68,58 46,58 Q22,58 22,84 Q22,110 46,110 Q68,110 68,84`, `M68,60 L68,110`],
+    'b': [`M25,15 L25,110`, `M25,80 Q25,58 47,58 Q70,58 70,84 Q70,110 47,110 Q25,110 25,84`],
+    'c': [`M68,68 Q55,55 40,58 Q20,63 20,84 Q20,105 40,110 Q55,113 68,100`],
+    'd': [`M70,80 Q70,58 48,58 Q25,58 25,84 Q25,110 48,110 Q70,110 70,84`, `M70,15 L70,110`],
+    'e': [`M20,86 L70,86 Q70,58 47,58 Q22,58 22,84 Q22,110 47,110 Q63,110 70,98`],
+    'f': [`M60,18 Q45,15 42,32 L42,110`, `M28,60 L58,60`],
+    'g': [`M68,60 Q68,58 46,58 Q24,58 24,80 Q24,102 46,102 Q68,102 68,80 L68,105`, `M68,90 L68,120 Q68,138 46,134`],
+    'h': [`M25,15 L25,110`, `M25,75 Q35,58 52,58 Q70,58 70,80 L70,110`],
+    'i': [`M50,58 L50,110`, dot(49,38)],
+    'j': [`M55,58 L55,120 Q55,138 35,133`, dot(54,38)],
+    'k': [`M25,15 L25,110`, `M68,58 L30,85`, `M42,75 L70,110`],
+    'l': [`M45,15 L45,110`],
+    'm': [`M18,110 L18,60`, `M18,75 Q26,58 40,58 Q54,58 54,80 L54,110`, `M54,75 Q62,58 76,58 Q90,58 90,80 L90,110`],
+    'n': [`M20,110 L20,60`, `M20,75 Q30,58 47,58 Q65,58 65,80 L65,110`],
+    'o': [`M46,58 Q22,58 22,84 Q22,110 46,110 Q70,110 70,84 Q70,58 46,58`],
+    'p': [`M25,58 L25,138`, `M25,80 Q25,58 47,58 Q70,58 70,84 Q70,110 47,110 Q25,110 25,84`],
+    'q': [`M70,80 Q70,58 48,58 Q25,58 25,84 Q25,110 48,110 Q70,110 70,84`, `M70,58 L70,138`],
+    'r': [`M22,110 L22,58`, `M22,72 Q32,55 50,60`],
+    's': [`M65,66 Q55,54 38,58 Q22,62 24,74 Q26,84 46,86 Q66,88 66,100 Q66,112 46,112 Q28,112 22,100`],
+    't': [`M45,25 L45,95 Q45,110 62,106`, `M28,58 L60,58`],
+    'u': [`M22,58 L22,95 Q22,110 42,110 Q58,110 58,95 L58,58`, `M58,58 L58,110`],
+    'v': [`M18,58 L46,110`, `M74,58 L46,110`],
+    'w': [`M14,58 L28,110 L46,72 L64,110 L82,58`],
+    'x': [`M20,58 L70,110`, `M70,58 L20,110`],
+    'y': [`M18,58 L46,105`, `M74,58 L38,138 Q30,138 25,132`],
+    'z': [`M22,58 L68,58 L22,110 L68,110`],
+    'ñ': [`M20,110 L20,60`, `M20,75 Q30,58 47,58 Q65,58 65,80 L65,110`, `M25,42 Q35,32 47,42 Q59,52 71,42`],
+    'á': [`M68,84 Q68,58 46,58 Q22,58 22,84 Q22,110 46,110 Q68,110 68,84`, `M68,60 L68,110`, `M42,50 L52,38`],
+    'é': [`M20,86 L70,86 Q70,58 47,58 Q22,58 22,84 Q22,110 47,110 Q63,110 70,98`, `M42,50 L52,38`],
+    'í': [`M50,58 L50,110`, `M44,50 L54,38`],
+    'ó': [`M46,58 Q22,58 22,84 Q22,110 46,110 Q70,110 70,84 Q70,58 46,58`, `M42,50 L52,38`],
+    'ú': [`M22,58 L22,95 Q22,110 42,110 Q58,110 58,95 L58,58`, `M58,58 L58,110`, `M42,50 L52,38`],
+    'ü': [`M22,58 L22,95 Q22,110 42,110 Q58,110 58,95 L58,58`, `M58,58 L58,110`, dot(35,48), dot(55,48)],
+  };
+
+  const VIEWBOX = "0 -12 100 152";
+
+  /* ---------- Normalización de la palabra ---------- */
+  function normalizeWord(raw){
+    const cleaned = raw.replace(/[^a-zA-ZÁÉÍÓÚÜÑáéíóúüñ]/g, '');
+    if(!cleaned) return '';
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+  }
+
+  /* ---------- Construcción visual de una letra ---------- */
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  function buildLetterBox(char, index){
+    const box = document.createElement('div');
+    box.className = 'letter-box';
+    box.setAttribute('data-index', index);
+    box.setAttribute('tabindex', '-1');
+    box.setAttribute('role', 'button');
+    box.setAttribute('aria-label', `Letra ${char}`);
+
+    const badge = document.createElement('div');
+    badge.className = 'badge';
+    badge.textContent = index + 1;
+    box.appendChild(badge);
+
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', VIEWBOX);
+    box.appendChild(svg);
+
+    const strokes = LETTERS[char] || [];
+
+    // Capa guía punteada (siempre visible)
+    const guideGroup = document.createElementNS(SVG_NS, 'g');
+    strokes.forEach(d => {
+      const p = document.createElementNS(SVG_NS, 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', 'var(--guide)');
+      p.setAttribute('stroke-width', '4');
+      p.setAttribute('stroke-linecap', 'round');
+      p.setAttribute('stroke-linejoin', 'round');
+      p.setAttribute('stroke-dasharray', '0.5 9');
+      guideGroup.appendChild(p);
+    });
+    svg.appendChild(guideGroup);
+
+    // Capa de trazo animado (inicialmente invisible)
+    const traceGroup = document.createElementNS(SVG_NS, 'g');
+    const tracePaths = strokes.map(d => {
+      const p = document.createElementNS(SVG_NS, 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('fill', 'none');
+      p.setAttribute('stroke-width', '6.5');
+      p.setAttribute('stroke-linecap', 'round');
+      p.setAttribute('stroke-linejoin', 'round');
+      p.setAttribute('stroke', 'transparent');
+      traceGroup.appendChild(p);
+      return p;
+    });
+    svg.appendChild(traceGroup);
+
+    // Punto que simula la punta del lápiz
+    const pen = document.createElementNS(SVG_NS, 'circle');
+    pen.setAttribute('r', '6.5');
+    pen.setAttribute('fill', 'transparent');
+    pen.style.display = 'none';
+    svg.appendChild(pen);
+
+    // Si el caracter no tiene datos (raro), al menos mostrar un texto simple de respaldo
+    if(strokes.length === 0){
+      const t = document.createElementNS(SVG_NS, 'text');
+      t.setAttribute('x', '50');
+      t.setAttribute('y', '95');
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('font-size', '70');
+      t.setAttribute('fill', 'var(--guide)');
+      t.textContent = char;
+      svg.appendChild(t);
+    }
+
+    return { box, tracePaths, pen };
+  }
+
+  /* ---------- Animación de trazo (velocidad constante, curva suave) ---------- */
+  function easeInOutQuad(t){
+    return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+  }
+
+  function drawStroke(pathEl, penEl, color){
+    return new Promise(resolve => {
+      const length = pathEl.getTotalLength();
+      pathEl.setAttribute('stroke', color);
+      pathEl.setAttribute('stroke-dasharray', String(length));
+      pathEl.setAttribute('stroke-dashoffset', String(length));
+
+      penEl.setAttribute('fill', color);
+      penEl.style.display = 'block';
+      const start = pathEl.getPointAtLength(0);
+      penEl.setAttribute('cx', start.x);
+      penEl.setAttribute('cy', start.y);
+
+      const duration = Math.max(500, length * 9);
+      let startTime = null;
+
+      function frame(now){
+        if(startTime === null) startTime = now;
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        const eased = easeInOutQuad(t);
+        pathEl.setAttribute('stroke-dashoffset', String(length * (1 - eased)));
+        const pt = pathEl.getPointAtLength(eased * length);
+        penEl.setAttribute('cx', pt.x);
+        penEl.setAttribute('cy', pt.y);
+        if(t < 1){
+          requestAnimationFrame(frame);
+        } else {
+          resolve();
+        }
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function resetTrace(letterState){
+    letterState.tracePaths.forEach(p => {
+      p.setAttribute('stroke', 'transparent');
+      const length = p.getTotalLength();
+      p.setAttribute('stroke-dasharray', String(length));
+      p.setAttribute('stroke-dashoffset', String(length));
+    });
+    letterState.pen.style.display = 'none';
+  }
+
+  /* ---------- Estado de la aplicación ---------- */
+  const wordForm = document.getElementById('wordForm');
+  const wordInput = document.getElementById('wordInput');
+  const formHint = document.getElementById('formHint');
+  const lettersRow = document.getElementById('lettersRow');
+  const controlsArea = document.getElementById('controlsArea');
+  const progressText = document.getElementById('progressText');
+  const advanceBtn = document.getElementById('advanceBtn');
+  const repeatBtn = document.getElementById('repeatBtn');
+  const celebration = document.getElementById('celebration');
+  const afterRow = document.getElementById('afterRow');
+  const againBtn = document.getElementById('againBtn');
+  const newWordBtn = document.getElementById('newWordBtn');
+
+  let letters = [];      // array de {char, box, tracePaths, pen, done}
+  let currentIndex = 0;
+  let isAnimating = false;
+
+  function buildWord(word){
+    lettersRow.innerHTML = '';
+    letters = [];
+    currentIndex = 0;
+    isAnimating = false;
+    celebration.style.display = 'none';
+    afterRow.style.display = 'none';
+    advanceBtn.style.display = '';
+    repeatBtn.style.display = '';
+    repeatBtn.disabled = true;
+
+    [...word].forEach((char, i) => {
+      const { box, tracePaths, pen } = buildLetterBox(char, i);
+      lettersRow.appendChild(box);
+      const state = { char, box, tracePaths, pen, done: false };
+      box.addEventListener('click', () => onLetterBoxClick(i));
+      letters.push(state);
+    });
+
+    controlsArea.style.display = 'flex';
+    updateActiveHighlight();
+    updateProgressText();
+    advanceBtn.textContent = 'Trazar primera letra';
+    advanceBtn.disabled = false;
+  }
+
+  function updateActiveHighlight(){
+    letters.forEach((l, i) => {
+      l.box.classList.toggle('active', i === currentIndex && !allDone());
+      l.box.classList.toggle('done', l.done);
+      l.box.setAttribute('tabindex', (i === currentIndex && !allDone()) ? '0' : '-1');
+    });
+  }
+
+  function allDone(){
+    return letters.length > 0 && currentIndex >= letters.length;
+  }
+
+  function updateProgressText(){
+    if(letters.length === 0){ progressText.textContent = ''; return; }
+    if(allDone()){
+      progressText.textContent = `¡Palabra completa! (${letters.length} de ${letters.length})`;
+    } else {
+      progressText.textContent = `Letra ${currentIndex + 1} de ${letters.length}`;
+    }
+  }
+
+  function onLetterBoxClick(i){
+    if(i === currentIndex && !isAnimating && !allDone()){
+      advanceOneLetter();
+    }
+  }
+
+  async function advanceOneLetter(){
+    if(isAnimating || allDone()) return;
+    isAnimating = true;
+    advanceBtn.disabled = true;
+    repeatBtn.disabled = true;
+
+    const state = letters[currentIndex];
+    const rootStyles = getComputedStyle(document.documentElement);
+    const color = currentIndex === 0
+      ? rootStyles.getPropertyValue('--trace-red').trim()
+      : rootStyles.getPropertyValue('--trace-black').trim();
+
+    resetTrace(state);
+    for(const pathEl of state.tracePaths){
+      await drawStroke(pathEl, state.pen, color);
+    }
+    state.pen.style.display = 'none';
+    state.done = true;
+    state.box.classList.add('done');
+
+    currentIndex++;
+    isAnimating = false;
+    updateActiveHighlight();
+    updateProgressText();
+
+    if(allDone()){
+      advanceBtn.style.display = 'none';
+      repeatBtn.style.display = 'none';
+      celebration.style.display = 'block';
+      afterRow.style.display = 'flex';
+    } else {
+      advanceBtn.disabled = false;
+      advanceBtn.textContent = 'Trazar siguiente letra';
+      repeatBtn.disabled = true;
+    }
+  }
+
+  async function repeatCurrentLetterTrace(){
+    if(isAnimating || currentIndex === 0) return;
+    // repite el trazo de la última letra completada
+    const lastIndex = currentIndex - 1;
+    if(lastIndex < 0) return;
+    isAnimating = true;
+    advanceBtn.disabled = true;
+    repeatBtn.disabled = true;
+
+    const state = letters[lastIndex];
+    const rootStyles = getComputedStyle(document.documentElement);
+    const color = lastIndex === 0
+      ? rootStyles.getPropertyValue('--trace-red').trim()
+      : rootStyles.getPropertyValue('--trace-black').trim();
+
+    resetTrace(state);
+    for(const pathEl of state.tracePaths){
+      await drawStroke(pathEl, state.pen, color);
+    }
+    state.pen.style.display = 'none';
+
+    isAnimating = false;
+    advanceBtn.disabled = allDone();
+    repeatBtn.disabled = (currentIndex === 0);
+  }
+
+  // Habilitar "Repetir" solo cuando ya se trazó al menos una letra
+  function refreshRepeatAvailability(){
+    repeatBtn.disabled = (currentIndex === 0) || isAnimating;
+  }
+
+  wordForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const word = normalizeWord(wordInput.value);
+    if(!word){
+      formHint.textContent = 'Escribe al menos una letra para comenzar.';
+      formHint.style.color = '#B85C3A';
+      return;
+    }
+    formHint.textContent = 'Escribe un nombre o una palabra y pulsa "Crear palabra".';
+    formHint.style.color = '';
+    wordInput.value = word;
+    buildWord(word);
+  });
+
+  advanceBtn.addEventListener('click', async () => {
+    await advanceOneLetter();
+    refreshRepeatAvailability();
+  });
+
+  repeatBtn.addEventListener('click', async () => {
+    await repeatCurrentLetterTrace();
+    refreshRepeatAvailability();
+  });
+
+  againBtn.addEventListener('click', () => {
+    const word = normalizeWord(wordInput.value);
+    if(word) buildWord(word);
+  });
+
+  newWordBtn.addEventListener('click', () => {
+    wordInput.value = '';
+    wordInput.focus();
+    lettersRow.innerHTML = '';
+    letters = [];
+    controlsArea.style.display = 'none';
+  });
+
+  // Permitir avanzar también con la tecla Enter/Espacio cuando la casilla activa tiene foco
+  lettersRow.addEventListener('keydown', (e) => {
+    if((e.key === 'Enter' || e.key === ' ') && document.activeElement.classList.contains('active')){
+      e.preventDefault();
+      const i = parseInt(document.activeElement.getAttribute('data-index'), 10);
+      onLetterBoxClick(i);
+    }
+  });
+
+  // Ajustar disabled del botón repetir tras cada avance
+  const observer = new MutationObserver(refreshRepeatAvailability);
+  observer.observe(controlsArea, { attributes: true, childList: true, subtree: true });
+
+})();
 </script>
 </body>
 </html>
