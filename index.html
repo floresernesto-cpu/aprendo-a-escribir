@@ -85,8 +85,8 @@
   .tab-btn{
     font-family: 'Baloo 2', sans-serif;
     font-weight: 700;
-    font-size: 17px;
-    padding: 12px 22px;
+    font-size: 16px;
+    padding: 12px 20px;
     border-radius: 999px;
     border: 2px solid var(--blue-pale);
     background: #FFFFFF;
@@ -182,20 +182,60 @@
   /* ---------- Tarjeta de imagen alusiva ---------- */
   .image-card{
     display: none;
+    flex-direction: column;
     margin: 18px auto 4px;
     max-width: 220px;
-    aspect-ratio: 1 / 1;
+    min-height: 150px;
     border-radius: 22px;
     align-items: center;
     justify-content: center;
     background: var(--blue-pale);
     border: 2px solid var(--card-border);
     transition: background 0.25s ease;
+    padding: 12px;
+    gap: 6px;
   }
   .image-card.visible{ display: flex; }
   .image-card .emoji{
     font-size: 84px;
-    line-height: 1;
+    line-height: 1.1;
+    text-align:center;
+  }
+  .image-card.number-mode{ max-width: 280px; }
+  .image-card.number-mode .emoji{ font-size: 46px; word-break: break-all; }
+  .image-card .qty-row{
+    font-size: 22px;
+    line-height: 1.3;
+    text-align:center;
+    max-width: 100%;
+  }
+
+  /* ---------- Fila de pictogramas (módulo oraciones) ---------- */
+  .pictogram-row{
+    display:none;
+    flex-wrap: wrap;
+    justify-content:center;
+    gap: 8px;
+    margin: 4px auto 4px;
+    max-width: 640px;
+  }
+  .pictogram-row.visible{ display:flex; }
+  .pictogram-chip{
+    background: #F3F9FF;
+    border: 1.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 24px;
+    line-height: 1.1;
+    min-width: 34px;
+    text-align:center;
+  }
+  .pictogram-chip.word-fallback{
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    background: #F0F3F6;
   }
 
   #stage{ margin-top: 10px; }
@@ -299,6 +339,7 @@
     .letter-box{ width: 82px; height: 114px; }
     .image-card{ max-width: 170px; }
     .image-card .emoji{ font-size: 62px; }
+    .image-card.number-mode .emoji{ font-size: 36px; }
   }
 </style>
 </head>
@@ -315,6 +356,7 @@
 
   <div class="tabs" role="tablist" aria-label="Módulos de aprendizaje">
     <button class="tab-btn active" id="tabWordBtn" role="tab" aria-selected="true">Aprende palabras</button>
+    <button class="tab-btn" id="tabNumberBtn" role="tab" aria-selected="false">Aprende Números</button>
     <button class="tab-btn" id="tabSentenceBtn" role="tab" aria-selected="false">Aprende oraciones</button>
   </div>
 
@@ -328,6 +370,7 @@
 
     <div class="image-card" id="word_imageCard">
       <span class="emoji" id="word_imageEmoji">⭐</span>
+      <div class="qty-row" id="word_qtyRow"></div>
     </div>
 
     <div id="word_stage">
@@ -348,17 +391,51 @@
     </div>
   </section>
 
-  <!-- ===================== MÓDULO 2: ORACIONES ===================== -->
+  <!-- ===================== MÓDULO 2: NÚMEROS ===================== -->
+  <section class="panel module-panel" id="panel-number" style="display:none;">
+    <div class="word-form">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" id="number_input" placeholder="Escribe un número, por ejemplo: 7" maxlength="8" autocomplete="off">
+      <button type="button" class="btn" id="number_createBtn">Crear número</button>
+    </div>
+    <p class="hint" id="number_hint">Escribe un número y pulsa "Crear número".</p>
+
+    <div class="image-card number-mode" id="number_imageCard">
+      <span class="emoji" id="number_imageEmoji">⭐</span>
+      <div class="qty-row" id="number_qtyRow"></div>
+    </div>
+
+    <div id="number_stage">
+      <div class="letters-row" id="number_lettersRow"></div>
+
+      <div class="controls" id="number_controlsArea" style="display:none;">
+        <div class="progress-text" id="number_progressText" aria-live="polite"></div>
+        <div class="controls-row">
+          <button class="btn" id="number_advanceBtn">Trazar primer número</button>
+          <button class="btn secondary" id="number_repeatBtn">Repetir este número</button>
+        </div>
+        <div class="celebration" id="number_celebration">¡Muy bien! Escribiste tu número 🌟</div>
+        <div class="controls-row" id="number_afterRow" style="display:none;">
+          <button class="btn" id="number_againBtn">Practicar de nuevo</button>
+          <button class="btn secondary" id="number_newWordBtn">Escribir otro número</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MÓDULO 3: ORACIONES ===================== -->
   <section class="panel module-panel" id="panel-sentence" style="display:none;">
     <div class="word-form">
-      <input type="text" id="sentence_input" placeholder="Escribe una oración corta, por ejemplo: La casa es rosa" maxlength="40" autocomplete="off">
+      <input type="text" id="sentence_input" placeholder="Escribe una oración corta, por ejemplo: Mi mamá está en la casa" maxlength="48" autocomplete="off">
       <button type="button" class="btn" id="sentence_createBtn">Crear oración</button>
     </div>
-    <p class="hint" id="sentence_hint">Escribe una oración corta y pulsa "Crear oración".</p>
+    <p class="hint" id="sentence_hint">Escribe una oración corta (puede tener números) y pulsa "Crear oración".</p>
 
     <div class="image-card" id="sentence_imageCard">
       <span class="emoji" id="sentence_imageEmoji">⭐</span>
+      <div class="qty-row" id="sentence_qtyRow"></div>
     </div>
+
+    <div class="pictogram-row" id="sentence_pictogramRow"></div>
 
     <div id="sentence_stage">
       <div class="letters-row" id="sentence_lettersRow"></div>
@@ -387,8 +464,8 @@
 <script>
 (function(){
 
-  /* ---------- Datos de trazos de letras (fuente monolínea para calcar) ---------- */
-  /* viewBox usado por todas las letras: "0 -12 100 152" */
+  /* ---------- Datos de trazos de letras y números (fuente monolínea para calcar) ---------- */
+  /* viewBox usado por todos los caracteres: "0 -12 100 152" */
 
   const dot = (x,y) => `M${x},${y} L${x+2},${y}`;
 
@@ -462,11 +539,36 @@
     'ó': [`M46,58 Q22,58 22,84 Q22,110 46,110 Q70,110 70,84 Q70,58 46,58`, `M42,50 L52,38`],
     'ú': [`M22,58 L22,95 Q22,110 42,110 Q58,110 58,95 L58,58`, `M58,58 L58,110`, `M42,50 L52,38`],
     'ü': [`M22,58 L22,95 Q22,110 42,110 Q58,110 58,95 L58,58`, `M58,58 L58,110`, dot(35,48), dot(55,48)],
+
+    // ---------- números ----------
+    '0': [`M50,15 Q80,15 80,63 Q80,110 50,110 Q20,110 20,63 Q20,15 50,15`],
+    '1': [`M35,35 L50,15 L50,110`],
+    '2': [`M20,35 Q20,15 42,15 Q65,15 65,34 Q65,52 45,66 L18,102 L70,102`],
+    '3': [`M20,28 Q20,15 42,15 Q64,15 64,33 Q64,50 44,53 Q66,55 66,75 Q66,100 44,108 Q22,108 18,90`],
+    '4': [`M58,15 L18,72 L70,72`, `M55,45 L55,110`],
+    '5': [`M65,18 L22,18 L20,55 Q45,42 60,58 Q72,70 65,92 Q55,110 28,102`],
+    '6': [`M62,20 Q28,20 20,58 Q13,95 42,110 Q68,110 68,85 Q68,62 42,62 Q22,62 20,80`],
+    '7': [`M18,18 L70,18 L34,110`],
+    '8': [`M50,15 Q28,15 28,36 Q28,56 50,58 Q72,60 72,84 Q72,108 50,108 Q28,108 28,84 Q28,60 50,58 Q72,56 72,36 Q72,15 50,15`],
+    '9': [`M62,38 Q62,18 40,18 Q18,18 18,40 Q18,60 40,60 Q62,60 62,38 L62,82 Q62,108 38,108`],
   };
 
   const VIEWBOX = "0 -12 100 152";
 
-  /* ---------- Diccionarios para la imagen alusiva ---------- */
+  /* ---------- Emojis de teclado para números ---------- */
+  const KEYCAP_DIGITS = {
+    '0':'0️⃣','1':'1️⃣','2':'2️⃣','3':'3️⃣','4':'4️⃣',
+    '5':'5️⃣','6':'6️⃣','7':'7️⃣','8':'8️⃣','9':'9️⃣'
+  };
+  function digitsToKeycaps(str){
+    return [...str].map(d => KEYCAP_DIGITS[d] || '').join('');
+  }
+  function quantityStars(n){
+    if(n <= 0 || n > 15) return '';
+    return '⭐'.repeat(n);
+  }
+
+  /* ---------- Diccionarios para la imagen alusiva (palabras/oraciones) ---------- */
   function stripAccents(s){
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
@@ -530,6 +632,45 @@
     return { emoji, bgColor };
   }
 
+  /* ---------- Diccionarios de pictogramas gramaticales (módulo oraciones) ---------- */
+  const PICTO_PRONOUNS = {
+    'yo':'🙋', 'tú':'👉',
+    'él':'🧑', 'ella':'👩',
+    'nosotros':'🙋🙋🙋', 'nosotras':'🙋🙋🙋',
+    'ustedes':'👉👉👉',
+    'ellos':'🧑🧑🧑', 'ellas':'👩👩👩'
+  };
+  const PICTO_SER_ESTAR = new Set([
+    'soy','eres','es','somos','sois','son',
+    'estoy','estás','está','estamos','estáis','están',
+    'era','eras','éramos','erais','eran',
+    'fui','fuiste','fue','fuimos','fuisteis','fueron',
+    'seré','serás','será','seremos','seréis','serán',
+    'sido','siendo','estado','estando'
+  ]);
+  const PICTO_ARTICLES = new Set(['el','la','los','las','un','una','unos','unas']);
+  const PICTO_PREPOSITION_EN = new Set(['en']);
+  const PICTO_POSSESSIVES = new Set(['mi','mis','tu','tus','su','sus','nuestro','nuestra','nuestros','nuestras']);
+  const PICTO_DEMONSTRATIVES = new Set([
+    'este','esta','estos','estas','ese','esa','esos','esas',
+    'aquel','aquella','aquellos','aquellas'
+  ]);
+
+  function classifyWordForPictogram(rawWord){
+    if(/^\d+$/.test(rawWord)) return digitsToKeycaps(rawWord);
+    const wClean = rawWord.toLowerCase().replace(/[^a-záéíóúüñ]/g, '');
+    if(!wClean) return null;
+    if(PICTO_PRONOUNS[wClean]) return PICTO_PRONOUNS[wClean];
+    if(PICTO_SER_ESTAR.has(wClean)) return '🟦';
+    if(PICTO_ARTICLES.has(wClean)) return '🔵';
+    if(PICTO_PREPOSITION_EN.has(wClean)) return '🔽';
+    if(PICTO_POSSESSIVES.has(wClean)) return '✳️';
+    if(PICTO_DEMONSTRATIVES.has(wClean)) return '☝️';
+    const strippedForNoun = stripAccents(wClean);
+    if(NOUN_EMOJI[strippedForNoun]) return NOUN_EMOJI[strippedForNoun];
+    return null;
+  }
+
   /* ---------- Normalización de texto ---------- */
   function normalizeWord(raw){
     const cleaned = raw.replace(/[^a-zA-ZÁÉÍÓÚÜÑáéíóúüñ]/g, '');
@@ -538,13 +679,17 @@
   }
 
   function normalizeSentence(raw){
-    let cleaned = raw.replace(/[^a-zA-ZÁÉÍÓÚÜÑáéíóúüñ ]/g, '');
+    let cleaned = raw.replace(/[^a-zA-ZÁÉÍÓÚÜÑáéíóúüñ0-9 ]/g, '');
     cleaned = cleaned.replace(/\s+/g, ' ').trim();
     if(!cleaned) return '';
     return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
   }
 
-  /* ---------- Construcción visual de una letra ---------- */
+  function normalizeNumber(raw){
+    return raw.replace(/[^0-9]/g, '');
+  }
+
+  /* ---------- Construcción visual de un carácter (letra o número) ---------- */
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   function buildLetterBox(char, index){
@@ -553,7 +698,7 @@
     box.setAttribute('data-index', index);
     box.setAttribute('tabindex', '-1');
     box.setAttribute('role', 'button');
-    box.setAttribute('aria-label', `Letra ${char}`);
+    box.setAttribute('aria-label', `Carácter ${char}`);
 
     const badge = document.createElement('div');
     badge.className = 'badge';
@@ -669,8 +814,9 @@
     return isFirst ? rootStyles.getPropertyValue('--trace-red').trim() : rootStyles.getPropertyValue('--trace-black').trim();
   }
 
-  /* ---------- Fábrica de módulo (palabras u oraciones) ---------- */
-  function createModule(prefix, normalizeFn){
+  /* ---------- Fábrica de módulo (palabras, números u oraciones) ---------- */
+  function createModule(prefix, options){
+    const { normalizeFn, imageMode, showPictograms, emptyMessage } = options;
     const el = (name) => document.getElementById(prefix + '_' + name);
 
     const input = el('input');
@@ -678,6 +824,8 @@
     const hint = el('hint');
     const imageCard = el('imageCard');
     const imageEmoji = el('imageEmoji');
+    const qtyRow = el('qtyRow');
+    const pictogramRow = showPictograms ? el('pictogramRow') : null;
     const lettersRow = el('lettersRow');
     const controlsArea = el('controlsArea');
     const progressText = el('progressText');
@@ -693,10 +841,40 @@
     let isAnimating = false;
 
     function updateImageCard(text){
-      const { emoji, bgColor } = analyzeText(text);
-      imageEmoji.textContent = emoji;
-      imageCard.style.background = bgColor || '';
+      qtyRow.textContent = '';
+      if(imageMode === 'number'){
+        imageEmoji.textContent = digitsToKeycaps(text);
+        imageCard.style.background = '';
+        const n = parseInt(text, 10);
+        if(!isNaN(n)){
+          const stars = quantityStars(n);
+          if(stars) qtyRow.textContent = stars;
+        }
+      } else {
+        const { emoji, bgColor } = analyzeText(text);
+        imageEmoji.textContent = emoji;
+        imageCard.style.background = bgColor || '';
+      }
       imageCard.classList.add('visible');
+    }
+
+    function updatePictogramRow(text){
+      if(!pictogramRow) return;
+      pictogramRow.innerHTML = '';
+      const words = text.split(' ').filter(Boolean);
+      words.forEach(word => {
+        const chip = document.createElement('div');
+        const picto = classifyWordForPictogram(word);
+        if(picto){
+          chip.className = 'pictogram-chip';
+          chip.textContent = picto;
+        } else {
+          chip.className = 'pictogram-chip word-fallback';
+          chip.textContent = word;
+        }
+        pictogramRow.appendChild(chip);
+      });
+      pictogramRow.classList.toggle('visible', words.length > 0);
     }
 
     function buildSequence(text){
@@ -728,9 +906,10 @@
       controlsArea.style.display = 'flex';
       updateActiveHighlight();
       updateProgressText();
-      advanceBtn.textContent = 'Trazar primera letra';
+      advanceBtn.textContent = prefix === 'number' ? 'Trazar primer número' : 'Trazar primera letra';
       advanceBtn.disabled = false;
       updateImageCard(text);
+      if(showPictograms) updatePictogramRow(text);
     }
 
     function updateActiveHighlight(){
@@ -750,7 +929,7 @@
       if(allDone()){
         progressText.textContent = `¡Completo! (${letters.length} de ${letters.length})`;
       } else {
-        progressText.textContent = `Letra ${currentIndex + 1} de ${letters.length}`;
+        progressText.textContent = `${prefix === 'number' ? 'Número' : 'Letra'} ${currentIndex + 1} de ${letters.length}`;
       }
     }
 
@@ -793,7 +972,7 @@
         afterRow.style.display = 'flex';
       } else {
         advanceBtn.disabled = false;
-        advanceBtn.textContent = 'Trazar siguiente letra';
+        advanceBtn.textContent = prefix === 'number' ? 'Trazar siguiente número' : 'Trazar siguiente letra';
         repeatBtn.disabled = true;
       }
     }
@@ -822,13 +1001,11 @@
     function handleCreate(){
       const text = normalizeFn(input.value);
       if(!text){
-        hint.textContent = 'Escribe al menos una letra para comenzar.';
+        hint.textContent = emptyMessage;
         hint.style.color = '#C0524B';
         return;
       }
-      hint.textContent = prefix === 'word'
-        ? 'Escribe un nombre o una palabra y pulsa "Crear palabra".'
-        : 'Escribe una oración corta y pulsa "Crear oración".';
+      hint.textContent = options.defaultHint;
       hint.style.color = '';
       input.value = text;
       buildSequence(text);
@@ -863,6 +1040,7 @@
       letters = [];
       controlsArea.style.display = 'none';
       imageCard.classList.remove('visible');
+      if(pictogramRow) pictogramRow.classList.remove('visible');
     });
 
     lettersRow.addEventListener('keydown', (e) => {
@@ -874,26 +1052,52 @@
     });
   }
 
-  createModule('word', normalizeWord);
-  createModule('sentence', normalizeSentence);
+  createModule('word', {
+    normalizeFn: normalizeWord,
+    imageMode: 'lookup',
+    showPictograms: false,
+    emptyMessage: 'Escribe al menos una letra para comenzar.',
+    defaultHint: 'Escribe un nombre o una palabra y pulsa "Crear palabra".'
+  });
+
+  createModule('number', {
+    normalizeFn: normalizeNumber,
+    imageMode: 'number',
+    showPictograms: false,
+    emptyMessage: 'Escribe al menos un número para comenzar.',
+    defaultHint: 'Escribe un número y pulsa "Crear número".'
+  });
+
+  createModule('sentence', {
+    normalizeFn: normalizeSentence,
+    imageMode: 'lookup',
+    showPictograms: true,
+    emptyMessage: 'Escribe al menos una letra para comenzar.',
+    defaultHint: 'Escribe una oración corta (puede tener números) y pulsa "Crear oración".'
+  });
 
   /* ---------- Pestañas de módulos ---------- */
   const tabWordBtn = document.getElementById('tabWordBtn');
+  const tabNumberBtn = document.getElementById('tabNumberBtn');
   const tabSentenceBtn = document.getElementById('tabSentenceBtn');
   const panelWord = document.getElementById('panel-word');
+  const panelNumber = document.getElementById('panel-number');
   const panelSentence = document.getElementById('panel-sentence');
 
   function showModule(name){
-    const isWord = name === 'word';
-    panelWord.style.display = isWord ? 'block' : 'none';
-    panelSentence.style.display = isWord ? 'none' : 'block';
-    tabWordBtn.classList.toggle('active', isWord);
-    tabSentenceBtn.classList.toggle('active', !isWord);
-    tabWordBtn.setAttribute('aria-selected', String(isWord));
-    tabSentenceBtn.setAttribute('aria-selected', String(!isWord));
+    panelWord.style.display = name === 'word' ? 'block' : 'none';
+    panelNumber.style.display = name === 'number' ? 'block' : 'none';
+    panelSentence.style.display = name === 'sentence' ? 'block' : 'none';
+    tabWordBtn.classList.toggle('active', name === 'word');
+    tabNumberBtn.classList.toggle('active', name === 'number');
+    tabSentenceBtn.classList.toggle('active', name === 'sentence');
+    tabWordBtn.setAttribute('aria-selected', String(name === 'word'));
+    tabNumberBtn.setAttribute('aria-selected', String(name === 'number'));
+    tabSentenceBtn.setAttribute('aria-selected', String(name === 'sentence'));
   }
 
   tabWordBtn.addEventListener('click', () => showModule('word'));
+  tabNumberBtn.addEventListener('click', () => showModule('number'));
   tabSentenceBtn.addEventListener('click', () => showModule('sentence'));
 
 })();
