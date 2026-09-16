@@ -816,7 +816,7 @@
 
   /* ---------- Fábrica de módulo (palabras, números u oraciones) ---------- */
   function createModule(prefix, options){
-    const { normalizeFn, imageMode, showPictograms, emptyMessage } = options;
+    const { normalizeFn, imageMode, showPictograms, emptyMessage, firstRed = true } = options;
     const el = (name) => document.getElementById(prefix + '_' + name);
 
     const input = el('input');
@@ -950,7 +950,7 @@
       repeatBtn.disabled = true;
 
       const state = letters[currentIndex];
-      const color = traceColor(currentIndex === 0);
+      const color = traceColor(firstRed && currentIndex === 0);
 
       resetTrace(state);
       for(const pathEl of state.tracePaths){
@@ -985,7 +985,7 @@
       repeatBtn.disabled = true;
 
       const state = letters[lastIndex];
-      const color = traceColor(lastIndex === 0);
+      const color = traceColor(firstRed && lastIndex === 0);
 
       resetTrace(state);
       for(const pathEl of state.tracePaths){
@@ -1064,6 +1064,7 @@
     normalizeFn: normalizeNumber,
     imageMode: 'number',
     showPictograms: false,
+    firstRed: false,
     emptyMessage: 'Escribe al menos un número para comenzar.',
     defaultHint: 'Escribe un número y pulsa "Crear número".'
   });
